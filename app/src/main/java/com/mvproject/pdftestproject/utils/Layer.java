@@ -113,6 +113,6 @@ public class Layer {
     interface Limits {
         float MIN_SCALE = 0.06F;
         float MAX_SCALE = 4.0F;
-        float INITIAL_ENTITY_SCALE = 0.4F;
+        float INITIAL_ENTITY_SCALE = 0.2F;
     }
 }
