@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mvproject.pdftestproject.MyVerticalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewVertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mvproject.pdftestproject.MyHorizontalScrollView
+        android:id="@+id/scrollViewHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.mvproject.pdftestproject.view.MotionView
+                android:id="@+id/motionView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"/>
+        </FrameLayout>
+    </com.mvproject.pdftestproject.MyHorizontalScrollView>
+
+
+</com.mvproject.pdftestproject.MyVerticalScrollView>
+
