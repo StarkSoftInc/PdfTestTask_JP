@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -41,7 +42,9 @@ public class MotionView  extends FrameLayout {
     public interface MotionViewCallback {
         void onEntitySelected(@Nullable MotionEntity entity);
         void onEntityDoubleTap(@NonNull MotionEntity entity);
+        void onEntityUnSelected();
     }
+
 
     // layers
     private final List<MotionEntity> entities = new ArrayList<>();
@@ -214,11 +217,15 @@ public class MotionView  extends FrameLayout {
     }
 
     private void selectEntity(@Nullable MotionEntity entity, boolean updateCallback) {
+        Log.d("Item","selectEntity");
         if (selectedEntity != null) {
             selectedEntity.setIsSelected(false);
+            motionViewCallback.onEntityUnSelected();
         }
         if (entity != null) {
             entity.setIsSelected(true);
+        } else {
+            updateCallback = false;
         }
         selectedEntity = entity;
         invalidate();
@@ -340,6 +347,7 @@ public class MotionView  extends FrameLayout {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+
             updateSelectionOnTap(e);
             return true;
         }
