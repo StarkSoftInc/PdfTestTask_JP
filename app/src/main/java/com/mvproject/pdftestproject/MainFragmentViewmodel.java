@@ -17,7 +17,7 @@ import java.io.InputStream;
 
 public class MainFragmentViewmodel extends AndroidViewModel {
 
-    private FontProvider fontProvider;
+    private final FontProvider fontProvider;
 
     public MainFragmentViewmodel(@NonNull Application application) {
         super(application);

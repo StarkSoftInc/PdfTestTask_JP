@@ -24,7 +24,6 @@ import com.mvproject.pdftestproject.view.MotionView;
 import java.io.IOException;
 
 public class MainFragment extends Fragment {
-    private float currentZoomLevel = 12;
     private FragmentMainBinding binding;
     private MainFragmentViewmodel mainFragmentViewmodel;
     private static final String FILENAME = "test_pdf_document.pdf";
@@ -101,6 +100,7 @@ public class MainFragment extends Fragment {
             if (parcelFileDescriptor != null) {
                 PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
                 PdfRenderer.Page page = renderer.openPage(0);
+                float currentZoomLevel = 12;
                 int newWidth = (int) (getResources().getDisplayMetrics().widthPixels * page.getWidth() / 72 * currentZoomLevel / 40);
                 int newHeight = (int) (getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
                 Bitmap bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
