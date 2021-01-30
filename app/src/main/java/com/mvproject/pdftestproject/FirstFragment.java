@@ -2,23 +2,31 @@ package com.mvproject.pdftestproject;
 
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.mvproject.pdftestproject.databinding.FragmentFirstBinding;
+import com.mvproject.pdftestproject.text.MotionEntity;
 import com.mvproject.pdftestproject.text.TextEntity;
 import com.mvproject.pdftestproject.text.TextLayer;
 import com.mvproject.pdftestproject.utils.Font;
 import com.mvproject.pdftestproject.utils.FontProvider;
+import com.mvproject.pdftestproject.view.MotionView;
 
 public class FirstFragment extends Fragment {
     private FragmentFirstBinding binding;
     private FontProvider fontProvider;
+
+
 
     @Override
     public View onCreateView(
@@ -33,6 +41,24 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         this.fontProvider = new FontProvider(getResources());
 
+        final MotionView.MotionViewCallback motionViewCallback = new MotionView.MotionViewCallback() {
+            @Override
+            public void onEntitySelected(@Nullable MotionEntity entity) {
+                binding.scrollView.setScrolling(false);
+            }
+
+            @Override
+            public void onEntityDoubleTap(@NonNull MotionEntity entity) {
+                // startTextEntityEditing();
+            }
+
+            @Override
+            public void onEntityUnSelected() {
+                binding.scrollView.setScrolling(true);
+            }
+        };
+
+        binding.motionView.setMotionViewCallback(motionViewCallback);
     }
 
     @Override
