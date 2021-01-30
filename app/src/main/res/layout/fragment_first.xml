@@ -7,24 +7,35 @@
     android:layout_height="match_parent"
     tools:context=".FirstFragment">
 
-    <com.mvproject.pdftestproject.MyScrollView
-        android:id="@+id/scrollView"
+    <com.mvproject.pdftestproject.MyVerticalScrollView
+        android:id="@+id/scrollViewVertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.mvproject.pdftestproject.view.MotionView
-            android:id="@+id/motionView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <com.mvproject.pdftestproject.MyHorizontalScrollView
+            android:id="@+id/scrollViewHorizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="900dp"
-                android:src="@drawable/ic_add"/>
-        </com.mvproject.pdftestproject.view.MotionView>
-    </com.mvproject.pdftestproject.MyScrollView>
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <com.mvproject.pdftestproject.view.MotionView
+                    android:id="@+id/motionView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent">
+                </com.mvproject.pdftestproject.view.MotionView>
+            </FrameLayout>
+        </com.mvproject.pdftestproject.MyHorizontalScrollView>
 
 
+    </com.mvproject.pdftestproject.MyVerticalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

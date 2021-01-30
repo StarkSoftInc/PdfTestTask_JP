@@ -1,13 +1,13 @@
 package com.mvproject.pdftestproject;
 
+import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.graphics.pdf.PdfRenderer;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.ParcelFileDescriptor;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,11 +22,16 @@ import com.mvproject.pdftestproject.utils.Font;
 import com.mvproject.pdftestproject.utils.FontProvider;
 import com.mvproject.pdftestproject.view.MotionView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class FirstFragment extends Fragment {
+    private float currentZoomLevel = 12;
     private FragmentFirstBinding binding;
     private FontProvider fontProvider;
-
-
+    private static final String FILENAME = "test_pdf_document.pdf";
 
     @Override
     public View onCreateView(
@@ -44,7 +49,8 @@ public class FirstFragment extends Fragment {
         final MotionView.MotionViewCallback motionViewCallback = new MotionView.MotionViewCallback() {
             @Override
             public void onEntitySelected(@Nullable MotionEntity entity) {
-                binding.scrollView.setScrolling(false);
+                binding.scrollViewVertical.setScrolling(false);
+                binding.scrollViewHorizontal.setScrolling(false);
             }
 
             @Override
@@ -54,11 +60,47 @@ public class FirstFragment extends Fragment {
 
             @Override
             public void onEntityUnSelected() {
-                binding.scrollView.setScrolling(true);
+                binding.scrollViewVertical.setScrolling(true);
+                binding.scrollViewHorizontal.setScrolling(true);
             }
         };
 
         binding.motionView.setMotionViewCallback(motionViewCallback);
+
+        try {
+            File file = new File(requireContext().getCacheDir(), FILENAME);
+            if (!file.exists()) {
+                // Since PdfRenderer cannot handle the compressed asset file directly, we copy it into
+                // the cache directory.
+                InputStream asset = requireContext().getAssets().open(FILENAME);
+                FileOutputStream output = new FileOutputStream(file);
+                final byte[] buffer = new byte[1024];
+                int size;
+                while ((size = asset.read(buffer)) != -1) {
+                    output.write(buffer, 0, size);
+                }
+                asset.close();
+                output.close();
+            }
+            ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            // This is the PdfRenderer we use to render the PDF.
+            if (parcelFileDescriptor != null) {
+                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
+                PdfRenderer.Page page = renderer.openPage(0);
+                int newWidth = (int) (getResources().getDisplayMetrics().widthPixels * page.getWidth() / 72 * currentZoomLevel / 40);
+                int newHeight = (int) (getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
+                Bitmap bitmap = Bitmap.createBitmap(newWidth,newHeight,Bitmap.Config.ARGB_8888);
+                page.render(bitmap,null,null,PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
+                binding.image.setImageBitmap(bitmap);
+                page.close();
+                renderer.close();
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -86,7 +128,7 @@ public class FirstFragment extends Fragment {
         // redraw
         binding.motionView.invalidate();
         Snackbar.make(binding.getRoot(), "Created at " + center.x + ", " + center.y, Snackbar.LENGTH_LONG)
-          .setAction("Action", null).show();
+                .setAction("Action", null).show();
     }
 
 
