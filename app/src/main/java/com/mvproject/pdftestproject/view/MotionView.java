@@ -45,7 +45,6 @@ public class MotionView  extends FrameLayout {
         void onEntityUnSelected();
     }
 
-
     // layers
     private final List<MotionEntity> entities = new ArrayList<>();
     @Nullable
@@ -217,7 +216,6 @@ public class MotionView  extends FrameLayout {
     }
 
     private void selectEntity(@Nullable MotionEntity entity, boolean updateCallback) {
-        Log.d("Item","selectEntity");
         if (selectedEntity != null) {
             selectedEntity.setIsSelected(false);
             motionViewCallback.onEntityUnSelected();
@@ -317,7 +315,6 @@ public class MotionView  extends FrameLayout {
     }
 
     // gesture detectors
-
     private final View.OnTouchListener onTouchListener = new View.OnTouchListener() {
 
         @Override

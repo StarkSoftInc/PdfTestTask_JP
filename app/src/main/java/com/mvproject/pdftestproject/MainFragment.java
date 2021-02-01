@@ -24,6 +24,8 @@ import com.mvproject.pdftestproject.view.MotionView;
 import java.io.IOException;
 
 public class MainFragment extends Fragment {
+    private static float modifierY = 0.07F;
+    private static float modifierX = 0.35F;
     private FragmentMainBinding binding;
     private MainViewModel mainViewModel;
     private static final String FILENAME = "test_pdf_document.pdf";
@@ -86,7 +88,8 @@ public class MainFragment extends Fragment {
 
         // move text sticker up so that its not hidden under keyboard
         PointF center = textEntity.absoluteCenter();
-        center.y = center.y * 0.2F;
+        center.y = center.y * modifierY;
+        center.x = center.x * modifierX;
         textEntity.moveCenterTo(center);
 
         // redraw
