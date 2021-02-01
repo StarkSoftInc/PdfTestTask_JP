@@ -15,11 +15,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class MainFragmentViewmodel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel {
 
     private final FontProvider fontProvider;
 
-    public MainFragmentViewmodel(@NonNull Application application) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         this.fontProvider = new FontProvider(getApplication().getResources());
     }

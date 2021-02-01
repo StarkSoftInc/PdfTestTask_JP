@@ -24,8 +24,10 @@ import com.mvproject.pdftestproject.view.MotionView;
 import java.io.IOException;
 
 public class MainFragment extends Fragment {
+    private static float modifierY = 0.07F;
+    private static float modifierX = 0.35F;
     private FragmentMainBinding binding;
-    private MainFragmentViewmodel mainFragmentViewmodel;
+    private MainViewModel mainViewModel;
     private static final String FILENAME = "test_pdf_document.pdf";
 
     @Override
@@ -40,7 +42,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mainFragmentViewmodel = new ViewModelProvider(requireActivity()).get(MainFragmentViewmodel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         final MotionView.MotionViewCallback motionViewCallback = new MotionView.MotionViewCallback() {
             @Override
@@ -63,7 +65,7 @@ public class MainFragment extends Fragment {
 
         binding.motionView.setMotionViewCallback(motionViewCallback);
 
-        ParcelFileDescriptor pdfDescriptor = mainFragmentViewmodel.loadPdfFromAssets(FILENAME);
+        ParcelFileDescriptor pdfDescriptor = mainViewModel.loadPdfFromAssets(FILENAME);
         renderPdf(pdfDescriptor);
     }
 
@@ -74,25 +76,25 @@ public class MainFragment extends Fragment {
     }
 
     protected void addTextSticker() {
-        TextLayer textLayer = mainFragmentViewmodel.createTextLayer();
+        TextLayer textLayer = mainViewModel.createTextLayer();
         TextEntity textEntity = new TextEntity(
                 textLayer,
                 binding.motionView.getWidth(),
                 binding.motionView.getHeight(),
-                mainFragmentViewmodel.getFontProvider()
+                mainViewModel.getFontProvider()
         );
 
         binding.motionView.addEntityAndPosition(textEntity);
 
         // move text sticker up so that its not hidden under keyboard
         PointF center = textEntity.absoluteCenter();
-        center.y = center.y * 0.2F;
+        center.y = center.y * modifierY;
+        center.x = center.x * modifierX;
         textEntity.moveCenterTo(center);
 
         // redraw
         binding.motionView.invalidate();
-        Snackbar.make(binding.getRoot(), "Created at " + center.x + ", " + center.y, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Snackbar.make(binding.getRoot(), String.format(getString(R.string.msg_created) ,center.x,center.y), Snackbar.LENGTH_LONG).show();
     }
 
     private void renderPdf(ParcelFileDescriptor parcelFileDescriptor) {
@@ -111,6 +113,7 @@ public class MainFragment extends Fragment {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Snackbar.make(binding.getRoot(), getString(R.string.msg_error), Snackbar.LENGTH_LONG).show();
         }
     }
 }

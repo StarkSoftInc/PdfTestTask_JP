@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mvproject.pdftestproject.MyVerticalScrollView
+<com.mvproject.pdftestproject.view.MyVerticalScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollViewVertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.mvproject.pdftestproject.MyHorizontalScrollView
+    <com.mvproject.pdftestproject.view.MyHorizontalScrollView
         android:id="@+id/scrollViewHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -26,8 +26,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/transparent"/>
         </FrameLayout>
-    </com.mvproject.pdftestproject.MyHorizontalScrollView>
+    </com.mvproject.pdftestproject.view.MyHorizontalScrollView>
 
 
-</com.mvproject.pdftestproject.MyVerticalScrollView>
+</com.mvproject.pdftestproject.view.MyVerticalScrollView>
 
