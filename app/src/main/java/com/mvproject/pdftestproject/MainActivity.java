@@ -1,22 +1,20 @@
 package com.mvproject.pdftestproject;
 
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.mvproject.pdftestproject.databinding.ActivityMainBinding;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
-
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.mvproject.pdftestproject.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        binding.fab.setOnClickListener(view1 -> Snackbar.make(view1, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        binding.fab.setOnClickListener(view1 ->
+                call());
+
     }
 
     @Override
@@ -51,5 +50,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void call(){
+        FragmentManager fm = getSupportFragmentManager();
+        //if you added fragment via layout xml
+        FirstFragment fragment = (FirstFragment)fm.findFragmentById(R.id.firstFragment);
+        fragment.addTextSticker();
     }
 }
