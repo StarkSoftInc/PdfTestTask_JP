@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
-    private MainFragmentViewmodel mainFragmentViewmodel;
+    private MainViewModel mainViewModel;
     private static final String FILENAME = "test_pdf_document.pdf";
 
     @Override
@@ -40,7 +40,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mainFragmentViewmodel = new ViewModelProvider(requireActivity()).get(MainFragmentViewmodel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         final MotionView.MotionViewCallback motionViewCallback = new MotionView.MotionViewCallback() {
             @Override
@@ -63,7 +63,7 @@ public class MainFragment extends Fragment {
 
         binding.motionView.setMotionViewCallback(motionViewCallback);
 
-        ParcelFileDescriptor pdfDescriptor = mainFragmentViewmodel.loadPdfFromAssets(FILENAME);
+        ParcelFileDescriptor pdfDescriptor = mainViewModel.loadPdfFromAssets(FILENAME);
         renderPdf(pdfDescriptor);
     }
 
@@ -74,12 +74,12 @@ public class MainFragment extends Fragment {
     }
 
     protected void addTextSticker() {
-        TextLayer textLayer = mainFragmentViewmodel.createTextLayer();
+        TextLayer textLayer = mainViewModel.createTextLayer();
         TextEntity textEntity = new TextEntity(
                 textLayer,
                 binding.motionView.getWidth(),
                 binding.motionView.getHeight(),
-                mainFragmentViewmodel.getFontProvider()
+                mainViewModel.getFontProvider()
         );
 
         binding.motionView.addEntityAndPosition(textEntity);
