@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private void callAddTextView(){
         FragmentManager fm = getSupportFragmentManager();
         MainFragment fragment = (MainFragment)fm.findFragmentById(R.id.firstFragment);
-        fragment.addTextSticker();
+        if (fragment != null) {
+            fragment.addTextSticker();
+        }
     }
 }
