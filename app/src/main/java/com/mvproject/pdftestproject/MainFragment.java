@@ -91,8 +91,7 @@ public class MainFragment extends Fragment {
 
         // redraw
         binding.motionView.invalidate();
-        Snackbar.make(binding.getRoot(), "Created at " + center.x + ", " + center.y, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Snackbar.make(binding.getRoot(), String.format(getString(R.string.msg_created) ,center.x,center.y), Snackbar.LENGTH_LONG).show();
     }
 
     private void renderPdf(ParcelFileDescriptor parcelFileDescriptor) {
@@ -111,6 +110,7 @@ public class MainFragment extends Fragment {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Snackbar.make(binding.getRoot(), getString(R.string.msg_error), Snackbar.LENGTH_LONG).show();
         }
     }
 }
