@@ -55,7 +55,7 @@ public class TextLayer extends Layer {
          * so that users don't put small font size and scale it 100+ times
          */
         float MAX_SCALE = 1.0F;
-        float MIN_SCALE = 0.2F;
+        float MIN_SCALE = 0.1F;
 
         float MIN_BITMAP_HEIGHT = 0.13F;
 
