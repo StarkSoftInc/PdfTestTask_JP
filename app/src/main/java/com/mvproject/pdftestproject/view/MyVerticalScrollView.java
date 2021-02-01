@@ -1,29 +1,28 @@
-package com.mvproject.pdftestproject;
+package com.mvproject.pdftestproject.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
-public class MyHorizontalScrollView extends HorizontalScrollView {
+public class MyVerticalScrollView extends ScrollView {
     private boolean enableScrolling = true;
-    public MyHorizontalScrollView(Context context) {
+    public MyVerticalScrollView(Context context) {
         super(context);
     }
 
-    public MyHorizontalScrollView(Context context, AttributeSet attrs) {
+    public MyVerticalScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public MyHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MyVerticalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public MyHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MyVerticalScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
     @Override
@@ -46,7 +45,6 @@ public class MyHorizontalScrollView extends HorizontalScrollView {
     private boolean scrollingEnabled(){
         return enableScrolling;
     }
-
     public void setScrolling(boolean enableScrolling) {
         this.enableScrolling = enableScrolling;
     }
