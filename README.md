@@ -1,5 +1,6 @@
 # PDF annotation Test task
 
+![](preview.gif)
 
 ## About
 Android app that reads and displays PDF from assets and allow the user to place annotation views anywhere on the pdf
