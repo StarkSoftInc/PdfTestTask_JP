@@ -5,9 +5,13 @@ import android.graphics.PointF;
 import android.graphics.pdf.PdfRenderer;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,13 +26,15 @@ import com.mvproject.pdftestproject.text.TextLayer;
 import com.mvproject.pdftestproject.view.MotionView;
 
 import java.io.IOException;
+import java.util.List;
 
 public class MainFragment extends Fragment {
-    private static float modifierY = 0.07F;
-    private static float modifierX = 0.35F;
+    private static float modifierY = 200;
+    private static float modifierX = 400;
     private FragmentMainBinding binding;
     private MainViewModel mainViewModel;
-    private static final String FILENAME = "test_pdf_document.pdf";
+    //  private static final String FILENAME = "test_pdf_document.pdf";
+    private static final String FILENAME = "cheet_sql.pdf";
 
     @Override
     public View onCreateView(
@@ -64,9 +70,7 @@ public class MainFragment extends Fragment {
         };
 
         binding.motionView.setMotionViewCallback(motionViewCallback);
-
-        ParcelFileDescriptor pdfDescriptor = mainViewModel.loadPdfFromAssets(FILENAME);
-        renderPdf(pdfDescriptor);
+        renderPdf();
     }
 
     @Override
@@ -88,32 +92,32 @@ public class MainFragment extends Fragment {
 
         // move text sticker up so that its not hidden under keyboard
         PointF center = textEntity.absoluteCenter();
-        center.y = center.y * modifierY;
-        center.x = center.x * modifierX;
+        center.y = binding.scrollViewVertical.getScrollY() + modifierY;
+        center.x = binding.scrollViewHorizontal.getScrollX() + modifierX;
         textEntity.moveCenterTo(center);
 
         // redraw
         binding.motionView.invalidate();
-        Snackbar.make(binding.getRoot(), String.format(getString(R.string.msg_created) ,center.x,center.y), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(binding.getRoot(), String.format(getString(R.string.msg_created), center.x, center.y), Snackbar.LENGTH_LONG).show();
     }
 
-    private void renderPdf(ParcelFileDescriptor parcelFileDescriptor) {
-        try {
-            if (parcelFileDescriptor != null) {
-                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
-                PdfRenderer.Page page = renderer.openPage(0);
-                float currentZoomLevel = 12;
-                int newWidth = (int) (getResources().getDisplayMetrics().widthPixels * page.getWidth() / 72 * currentZoomLevel / 40);
-                int newHeight = (int) (getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
-                Bitmap bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
-                binding.image.setImageBitmap(bitmap);
-                page.close();
-                renderer.close();
+    private void renderPdf() {
+        List<Bitmap> pages = mainViewModel.getPagesFromFile(FILENAME);
+        if (pages.size() > 0) {
+            for (int i = 0; i < pages.size(); i++) {
+                getNewPageView(pages.get(i));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Snackbar.make(binding.getRoot(), getString(R.string.msg_error), Snackbar.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(requireContext(),getString(R.string.msg_error),Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void getNewPageView(Bitmap bitmap) {
+        final ImageView newPageView = new ImageView(requireContext());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 30, 0, 0);
+        newPageView.setLayoutParams(lp);
+        newPageView.setImageBitmap(bitmap);
+        binding.linear.addView(newPageView);
     }
 }
