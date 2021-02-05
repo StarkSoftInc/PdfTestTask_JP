@@ -107,12 +107,12 @@ public class TextEntity extends MotionEntity {
         int boundsHeight = sl.getHeight();
 
         // create bitmap not smaller than TextLayer.Limits.MIN_BITMAP_HEIGHT
-        int bmpHeight = (int) (canvasHeight * Math.max(TextLayer.Limits.MIN_BITMAP_HEIGHT, 0.75F * boundsHeight / canvasHeight));
+        //int bmpHeight = (int) (canvasHeight * Math.max(TextLayer.Limits.MIN_BITMAP_HEIGHT, 0.75F * boundsHeight / canvasHeight));
+        int bmpHeight = (int) (Math.max(TextLayer.Limits.MIN_BITMAP_HEIGHT, 1F * boundsHeight));
 
         // create bitmap where text will be drawn
         Bitmap bmp;
-        if (reuseBmp != null && reuseBmp.getWidth() == boundsWidth
-                && reuseBmp.getHeight() == bmpHeight) {
+        if (reuseBmp != null && reuseBmp.getWidth() == boundsWidth  && reuseBmp.getHeight() == bmpHeight) {
             // if previous bitmap exists, and it's width/height is the same - reuse it
             bmp = reuseBmp;
             bmp.eraseColor(Color.TRANSPARENT); // erase color when reusing
