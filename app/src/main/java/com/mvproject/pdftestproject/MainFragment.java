@@ -158,6 +158,7 @@ public class MainFragment extends Fragment {
 
     private void renderPdf(List<Bitmap> pages) {
         if (pages.size() > 0) {
+            binding.motionView.clearEntities();
             binding.linear.removeAllViews();
             for (int i = 0; i < pages.size(); i++) {
                 getNewPageView(pages.get(i));
