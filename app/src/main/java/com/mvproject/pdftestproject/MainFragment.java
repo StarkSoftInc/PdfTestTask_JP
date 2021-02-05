@@ -1,12 +1,17 @@
 package com.mvproject.pdftestproject;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
-import android.graphics.pdf.PdfRenderer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -25,15 +30,16 @@ import com.mvproject.pdftestproject.text.TextEntity;
 import com.mvproject.pdftestproject.text.TextLayer;
 import com.mvproject.pdftestproject.view.MotionView;
 
-import java.io.IOException;
 import java.util.List;
 
 public class MainFragment extends Fragment {
+    private static final int PICK_PDF_FILE = 2;
+    private static final String TYPE_PDF = "application/pdf";
+
     private static float modifierY = 200;
     private static float modifierX = 400;
     private FragmentMainBinding binding;
     private MainViewModel mainViewModel;
-    //  private static final String FILENAME = "test_pdf_document.pdf";
     private static final String FILENAME = "cheet_sql.pdf";
 
     @Override
@@ -42,6 +48,7 @@ public class MainFragment extends Fragment {
             Bundle savedInstanceState
     ) {
         binding = FragmentMainBinding.inflate(inflater, container, false);
+        setHasOptionsMenu(true);
         return binding.getRoot();
     }
 
@@ -70,7 +77,23 @@ public class MainFragment extends Fragment {
         };
 
         binding.motionView.setMotionViewCallback(motionViewCallback);
-        renderPdf();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_open) {
+            openFile();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -79,36 +102,68 @@ public class MainFragment extends Fragment {
         binding = null;
     }
 
-    protected void addTextSticker() {
-        TextLayer textLayer = mainViewModel.createTextLayer();
-        TextEntity textEntity = new TextEntity(
-                textLayer,
-                binding.motionView.getWidth(),
-                binding.motionView.getHeight(),
-                mainViewModel.getFontProvider()
-        );
 
-        binding.motionView.addEntityAndPosition(textEntity);
 
-        // move text sticker up so that its not hidden under keyboard
-        PointF center = textEntity.absoluteCenter();
-        center.y = binding.scrollViewVertical.getScrollY() + modifierY;
-        center.x = binding.scrollViewHorizontal.getScrollX() + modifierX;
-        textEntity.moveCenterTo(center);
-
-        // redraw
-        binding.motionView.invalidate();
-        Snackbar.make(binding.getRoot(), String.format(getString(R.string.msg_created), center.x, center.y), Snackbar.LENGTH_LONG).show();
+    private void openFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(TYPE_PDF);
+        startActivityForResult(intent, PICK_PDF_FILE);
     }
 
-    private void renderPdf() {
-        List<Bitmap> pages = mainViewModel.getPagesFromFile(FILENAME);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                 Intent resultData) {
+        if (requestCode == PICK_PDF_FILE
+                && resultCode == Activity.RESULT_OK) {
+            if (resultData != null) {
+                Handler mHandler = new Handler();
+                Uri uri = resultData.getData();
+                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                requireActivity().getContentResolver().takePersistableUriPermission(uri, takeFlags);
+                try{
+                    ParcelFileDescriptor parcelFileDescriptor = requireActivity().getContentResolver().openFileDescriptor(uri, "r");
+                    renderPdf(mainViewModel.getPagesFromFile(parcelFileDescriptor));
+                } catch (Exception ex) {
+                    Snackbar.make(binding.getRoot(), getString(R.string.msg_error), Snackbar.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    protected void addTextSticker() {
+        if (binding.linear.getChildCount() > 0) {
+            TextLayer textLayer = mainViewModel.createTextLayer();
+            TextEntity textEntity = new TextEntity(
+                    textLayer,
+                    binding.motionView.getWidth(),
+                    binding.motionView.getHeight(),
+                    mainViewModel.getFontProvider()
+            );
+
+            binding.motionView.addEntityAndPosition(textEntity);
+            // move text sticker up so that its not hidden under keyboard
+            PointF center = textEntity.absoluteCenter();
+            center.y = binding.scrollViewVertical.getScrollY() + modifierY;
+            center.x = binding.scrollViewHorizontal.getScrollX() + modifierX;
+            textEntity.moveCenterTo(center);
+
+            // redraw
+            binding.motionView.invalidate();
+            Snackbar.make(binding.getRoot(), String.format(getString(R.string.msg_created), center.x, center.y), Snackbar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(binding.getRoot(), getString(R.string.msg_file_not_opened), Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private void renderPdf(List<Bitmap> pages) {
         if (pages.size() > 0) {
+            binding.linear.removeAllViews();
             for (int i = 0; i < pages.size(); i++) {
                 getNewPageView(pages.get(i));
             }
         } else {
-            Toast.makeText(requireContext(),getString(R.string.msg_error),Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), getString(R.string.msg_error), Toast.LENGTH_LONG).show();
         }
     }
 

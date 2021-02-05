@@ -4,12 +4,10 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.mvproject.pdftestproject.text.TextLayer;
 import com.mvproject.pdftestproject.utils.Font;
 import com.mvproject.pdftestproject.utils.FontProvider;
@@ -19,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
@@ -61,6 +58,34 @@ public class MainViewModel extends AndroidViewModel {
                     int newHeight = (int) (getApplication().getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
                     Bitmap bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
                     page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
+                    pages.add(bitmap);
+                    page.close();
+                }
+                renderer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pages;
+    }
+
+    List<Bitmap> getPagesFromFile(ParcelFileDescriptor parcelFileDescriptor) {
+        List<Bitmap> pages = new ArrayList<>();
+        try {
+            if (parcelFileDescriptor != null) {
+                float currentZoomLevel = 9;
+                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
+                int pageCount = renderer.getPageCount();
+                // todo limit is for prevent crash on large files
+                if (pageCount > 10){
+                    pageCount = 10;
+                }
+                for (int i = 0; i < pageCount; i++) {
+                    PdfRenderer.Page page = renderer.openPage(i);
+                    int newWidth = (int) (getApplication().getResources().getDisplayMetrics().widthPixels * page.getWidth() / 72 * currentZoomLevel / 40);
+                    int newHeight = (int) (getApplication().getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
+                    Bitmap bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
                     pages.add(bitmap);
                     page.close();
                 }
