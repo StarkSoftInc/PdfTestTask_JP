@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -173,6 +174,7 @@ public class MainFragment extends Fragment {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 30, 0, 0);
         newPageView.setLayoutParams(lp);
+        newPageView.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.img_background));
         newPageView.setImageBitmap(bitmap);
         binding.linear.addView(newPageView);
     }
