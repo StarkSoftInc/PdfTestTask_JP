@@ -9,6 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="stroke_color">#8cf437</color>
+    <color name="img_border_color">#2B2B2B</color>
+    <color name="img_bg_color">#434E46</color>
 
     <color name="transparent">#00FFFFFF</color>
 </resources>

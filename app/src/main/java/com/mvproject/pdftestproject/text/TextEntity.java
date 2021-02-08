@@ -50,7 +50,7 @@ public class TextEntity extends MotionEntity {
         float height = bitmap.getHeight();
 
         @SuppressWarnings("UnnecessaryLocalVariable")
-        float widthAspect = 1.0F * canvasWidth / width;
+        float widthAspect = 0.75F * canvasWidth / width;
 
         // for text we always match text width with parent width
         this.holyScale = widthAspect;
@@ -107,13 +107,12 @@ public class TextEntity extends MotionEntity {
         int boundsHeight = sl.getHeight();
 
         // create bitmap not smaller than TextLayer.Limits.MIN_BITMAP_HEIGHT
-        int bmpHeight = (int) (canvasHeight * Math.max(TextLayer.Limits.MIN_BITMAP_HEIGHT,
-                1.0F * boundsHeight / canvasHeight));
+        //int bmpHeight = (int) (canvasHeight * Math.max(TextLayer.Limits.MIN_BITMAP_HEIGHT, 0.75F * boundsHeight / canvasHeight));
+        int bmpHeight = (int) (Math.max(TextLayer.Limits.MIN_BITMAP_HEIGHT, 1F * boundsHeight));
 
         // create bitmap where text will be drawn
         Bitmap bmp;
-        if (reuseBmp != null && reuseBmp.getWidth() == boundsWidth
-                && reuseBmp.getHeight() == bmpHeight) {
+        if (reuseBmp != null && reuseBmp.getWidth() == boundsWidth  && reuseBmp.getHeight() == bmpHeight) {
             // if previous bitmap exists, and it's width/height is the same - reuse it
             bmp = reuseBmp;
             bmp.eraseColor(Color.TRANSPARENT); // erase color when reusing

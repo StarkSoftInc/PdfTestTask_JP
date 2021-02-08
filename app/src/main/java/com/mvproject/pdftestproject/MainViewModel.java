@@ -1,6 +1,8 @@
 package com.mvproject.pdftestproject;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.pdf.PdfRenderer;
 import android.os.ParcelFileDescriptor;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -37,11 +41,63 @@ public class MainViewModel extends AndroidViewModel {
         return textLayer;
     }
 
-    FontProvider getFontProvider(){
+    FontProvider getFontProvider() {
         return this.fontProvider;
     }
 
-    ParcelFileDescriptor loadPdfFromAssets(String fileName) {
+    List<Bitmap> getPagesFromFile(String fileName) {
+        List<Bitmap> pages = new ArrayList<>();
+        ParcelFileDescriptor parcelFileDescriptor = loadPdfFromAssets(fileName);
+        try {
+            if (parcelFileDescriptor != null) {
+                float currentZoomLevel = 9;
+                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
+                for (int i = 0; i < renderer.getPageCount(); i++) {
+                    PdfRenderer.Page page = renderer.openPage(i);
+                    int newWidth = (int) (getApplication().getResources().getDisplayMetrics().widthPixels * page.getWidth() / 72 * currentZoomLevel / 40);
+                    int newHeight = (int) (getApplication().getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
+                    Bitmap bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
+                    pages.add(bitmap);
+                    page.close();
+                }
+                renderer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pages;
+    }
+
+    List<Bitmap> getPagesFromFile(ParcelFileDescriptor parcelFileDescriptor) {
+        List<Bitmap> pages = new ArrayList<>();
+        try {
+            if (parcelFileDescriptor != null) {
+                float currentZoomLevel = 9;
+                PdfRenderer renderer = new PdfRenderer(parcelFileDescriptor);
+                int pageCount = renderer.getPageCount();
+                // todo limit is for prevent crash on large files
+                if (pageCount > 10){
+                    pageCount = 10;
+                }
+                for (int i = 0; i < pageCount; i++) {
+                    PdfRenderer.Page page = renderer.openPage(i);
+                    int newWidth = (int) (getApplication().getResources().getDisplayMetrics().widthPixels * page.getWidth() / 72 * currentZoomLevel / 40);
+                    int newHeight = (int) (getApplication().getResources().getDisplayMetrics().heightPixels * page.getHeight() / 72 * currentZoomLevel / 64);
+                    Bitmap bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                    pages.add(bitmap);
+                    page.close();
+                }
+                renderer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pages;
+    }
+
+    private ParcelFileDescriptor loadPdfFromAssets(String fileName) {
         ParcelFileDescriptor parcelFileDescriptor = null;
         try {
             File file = new File(getApplication().getCacheDir(), fileName);
@@ -59,7 +115,6 @@ public class MainViewModel extends AndroidViewModel {
                 output.close();
             }
             parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-            // This is the PdfRenderer we use to render the PDF.
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -57,7 +57,7 @@ public class TextLayer extends Layer {
         float MAX_SCALE = 1.0F;
         float MIN_SCALE = 0.1F;
 
-        float MIN_BITMAP_HEIGHT = 0.13F;
+        float MIN_BITMAP_HEIGHT = 0.20F;
 
         float FONT_SIZE_STEP = 0.008F;
 

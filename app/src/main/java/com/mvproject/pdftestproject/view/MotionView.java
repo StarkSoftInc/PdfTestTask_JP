@@ -31,7 +31,7 @@ import java.util.List;
  * Created on 9/29/16.
  */
 
-public class MotionView  extends FrameLayout {
+public class MotionView extends FrameLayout {
 
     private static final String TAG = MotionView.class.getSimpleName();
 
@@ -41,7 +41,9 @@ public class MotionView  extends FrameLayout {
 
     public interface MotionViewCallback {
         void onEntitySelected(@Nullable MotionEntity entity);
+
         void onEntityDoubleTap(@NonNull MotionEntity entity);
+
         void onEntityUnSelected();
     }
 
@@ -130,7 +132,7 @@ public class MotionView  extends FrameLayout {
         }
     }
 
-    private void initEntityBorder(@NonNull MotionEntity entity ) {
+    private void initEntityBorder(@NonNull MotionEntity entity) {
         // init stroke
         int strokeSize = getResources().getDimensionPixelSize(R.dimen.stroke_size);
         Paint borderPaint = new Paint();
@@ -161,6 +163,7 @@ public class MotionView  extends FrameLayout {
 
     /**
      * draws all entities on the canvas
+     *
      * @param canvas Canvas where to draw all entities
      */
     private void drawAllEntities(Canvas canvas) {
@@ -171,6 +174,7 @@ public class MotionView  extends FrameLayout {
 
     /**
      * as a side effect - the method deselects Entity (if any selected)
+     *
      * @return bitmap with all the Entities at their current positions
      */
     public Bitmap getThumbnailImage() {
@@ -305,6 +309,13 @@ public class MotionView  extends FrameLayout {
             selectedEntity = null;
             invalidate();
         }
+    }
+
+    // delete all created entities
+    public void clearEntities() {
+        unselectEntity();
+        entities.clear();
+        invalidate();
     }
 
     // memory
